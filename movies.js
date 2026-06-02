@@ -52,8 +52,11 @@ async function getMovies(){
 
 getMovies()
 
+
+
 function renderUi(){
-    console.log(popularMovies);
+    // console.log(popularMovies);
+    // console.log(popularShow);
     
     const  movieContainer = document.querySelector('.movie-container');
      movieContainer.innerHTML = "";
@@ -86,8 +89,8 @@ movieContainer.appendChild(card)
 
     })
 
+
+    
 }
-
-
 
 

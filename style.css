@@ -470,11 +470,17 @@ body {
 /*  movies section  */
 
 
-.movie-container{
+.movie-container,.tvshow-container{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
     padding: 30px;
+}
+.title{
+    margin-left: 50px;
+    border-bottom: 3px solid red;
+    display: inline-block;
+
 }
 .card{
     width: 100%;
@@ -487,14 +493,8 @@ body {
     object-fit: cover;
     border-radius: 10px;
 }
-.title{
-    margin-left: 50px;
-    border-bottom: 3px solid red;
-    display: inline-block;
-
-}
 .card img:hover{
-opacity: .75;
+opacity: .95;
 }
 
 
@@ -516,22 +516,37 @@ opacity: .75;
     gap: 5px;
 }
 
+
 .pagenation{
     display: flex;
     justify-content: space-between;
     padding:  0 50px 10px 50px;
 }
 
-.next{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 .pagenation button{
     background-color: grey;
     border: none;
     color: #f4f4f4;
     cursor: pointer;
+}
+
+
+
+
+.tvCard{
+    width: 250px;
+    height: auto;
+}
+
+.tvCard img{
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.tvCard img:hover{
+opacity: .95;
 }
 
 
