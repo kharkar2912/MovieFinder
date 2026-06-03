@@ -36,7 +36,10 @@ function renderUi(){
         const tvCard = document.createElement('div');
          tvCard.classList.add('tvCard');
         tvCard.innerHTML = `
-                <img src="https://image.tmdb.org/t/p/w500/${show.poster_path}" alt="moviePoster">
+         <div class="card-img-wrapper">
+  
+         <img src="https://image.tmdb.org/t/p/w500/${show.poster_path}" alt="moviePoster" class="card-img">
+        </div>
                     <div class="card-info">
                         <p>${show.name}</p>
                         <div class="rating">
@@ -55,4 +58,53 @@ function renderUi(){
     })
 
 
+}
+
+const searchForm = document.querySelector('.serach_form');
+
+searchForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const searchText = document.querySelector('#show_input').value.toLowerCase();
+    const year = document.querySelector('#yearSearch').value;
+    const genre = document.querySelector('#genre').value;
+
+   
+    console.log(searchText)
+    console.log(year)
+    console.log(genre)
+
+
+    ;
+
+
+if(genre !== 0){
+async function filterShow(){
+        try{
+
+            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=${genre}`)
+            const data = await response.json();
+            console.log(data);
+            
+        }
+        catch(error){
+            console.log(error);
+            
+        }
+
+    }
+    filterShow()
+}
+    
+});
+
+//  years creating for option 
+
+const yearSelect = document.getElementById('yearSearch');
+
+for (let year = 2026; year >= 1970; year--) {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    yearSelect.appendChild(option);
 }
