@@ -581,7 +581,7 @@ border-radius: 10px;
 
 /* Serach tv Show */
 
-#show_input{
+#show_input,#movie_input{
 padding: 10px;
 border-radius: 20px;
  background:none;
@@ -636,4 +636,14 @@ option{
 .serach_form{
     display: flex;
     gap: 15px;
+}
+
+
+#prev, #next{
+    display: flex;
+    align-items: center;
+    gap:5px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #444;
 }

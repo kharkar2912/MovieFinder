@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tv Show</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-     <header class="navbar">
+    <header class="navbar">
 
 
         <div class="logo">
@@ -26,7 +28,6 @@
                     <rect x="20" y="28" width="12" height="4" rx="2" transform="rotate(45 20 28)" fill="#E50914" />
                 </g>
 
-                <!-- Text -->
                 <text x="50" y="33" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="white">
                     MOVIE
                 </text>
@@ -34,7 +35,6 @@
                 <text x="128" y="33" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#E50914">
                     FINDER
                 </text>
-
             </svg>
         </div>
 
@@ -68,19 +68,58 @@
 
     </header>
 
+    <!--  Search part  -->
+    <section>
+        <div class="searchContainer">
+
+            <form class="serach_form">
+
+                <input type="text" placeholder="Search Show" id="show_input">
+                <select id="yearSearch">
+                    <option value="All year">All year</option>
+                </select>
+                <select id="genre">
+                    <option value="">All Genres</option>
+                    <option value="28">Action</option>
+                    <option value="12">Adventure</option>
+                    <option value="16">Animation</option>
+                    <option value="35">Comedy</option>
+                    <option value="80">Crime</option>
+                    <option value="99">Documentary</option>
+                    <option value="18">Drama</option>
+                    <option value="10751">Family</option>
+                    <option value="14">Fantasy</option>
+                    <option value="36">History</option>
+                    <option value="27">Horror</option>
+                    <option value="10402">Music</option>
+                    <option value="9648">Mystery</option>
+                    <option value="10749">Romance</option>
+                    <option value="878">Science Fiction</option>
+                    <option value="10770">TV Movie</option>
+                    <option value="53">Thriller</option>
+                    <option value="10752">War</option>
+                    <option value="37">Western</option>
+                </select>
+
+                <button id="Searchbtn">Submit</button>
+            </form>
+        </div>
+
+    </section>
+
     <!-- discover show -->
-     
+
 
     <section class="popular-movie">
         <div class="title">
 
-            <h2 >DISCOVER POPULAR TV SHOWS</2h2>
-            
+            <h2>DISCOVER POPULAR TV SHOWS</h2>
+
         </div>
 
-            <div class="tvshow-container">
-               
-            </div>
+        <div class="tvshow-container">
+
+        </div>
     </section>
 
 
@@ -88,4 +127,5 @@
     <script src="tvshow.js"></script>
 
 </body>
+
 </html>

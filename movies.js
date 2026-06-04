@@ -1,33 +1,44 @@
 const baseurl = "https://api.themoviedb.org/3"
 const api = "c2b2450a7d2e59a0d4e951029f99dd83"
-const url ="https://api.themoviedb.org/3/movie/popular?api_key=";
-const next = document.querySelector('#next')
+const url = "https://api.themoviedb.org/3/movie/popular?api_key=";
+const next = document.querySelector('#next');
+const prev = document.querySelector('#prev');
+let movieName
 
 let pages = 1
 
-next.addEventListener('click',()=>{
-     pages++;
-    window.history.pushState({}, "", `?page=${pages}`); 
-    getMovies();
-     window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+let current = "popular"
+
+next.addEventListener('click', () => {
+    pages++;
+    window.history.pushState({}, "", `?page=${pages}`);
+    if(current === "popular"){
+      fetchMovies();
+    }else{
+        getMovies()
+    }
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
     });
-    
+
 })
 
 prev.addEventListener("click", () => {
-  if (pages > 1) {
-    pages--;
-    window.history.pushState({}, "", `?page=${pages}`);
+    if (pages > 1) {
+        pages--;
+        window.history.pushState({}, "", `?page=${pages}`);
+  if(current === "popular"){
+      fetchMovies();
+    }else{
+        getMovies()
+    }
 
-    getMovies();
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }
 });
 
 
@@ -35,38 +46,38 @@ prev.addEventListener("click", () => {
 
 let popularMovies = []
 
-async function getMovies(){
-    try{
+async function fetchMovies() {
+    try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=c2b2450a7d2e59a0d4e951029f99dd83&page=${pages}`);
-        const data =  await response.json();
-        popularMovies =  data.results.slice(0,20)
+        const data = await response.json();
+        popularMovies = data.results.slice(0, 20)
         renderUi()
-        
+
     }
-    catch(error){
+    catch (error) {
         console.log(error);
-        
+
     }
 }
 
 
-getMovies()
+fetchMovies()
 
 
 
-function renderUi(){
+function renderUi() {
     // console.log(popularMovies);
     // console.log(popularShow);
-    
-    const  movieContainer = document.querySelector('.movie-container');
-     movieContainer.innerHTML = "";
-    popularMovies.forEach(movie =>{
+
+    const movieContainer = document.querySelector('.movie-container');
+    movieContainer.innerHTML = "";
+    popularMovies.forEach(movie => {
 
         const card = document.createElement('div')
         card.classList.add('card');
 
 
-        card.innerHTML= `
+        card.innerHTML = `
          <div class="card-img-wrapper">
          <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="moviePoster" class="card-img">
          </div>
@@ -87,12 +98,74 @@ function renderUi(){
          </div>
         
         `
-movieContainer.appendChild(card)
+        movieContainer.appendChild(card)
 
     })
 
 
-    
+
 }
 
+const searchForm = document.querySelector('.serach_form');
 
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const movieInput = document.querySelector('#movie_input').value
+    const yearSearch = document.querySelector('#yearSearch').value
+    const genre = document.querySelector('#genre').value
+    movieName = movieInput.trim();
+    popularMovies.length = 0
+    current = "search"
+
+    if (movieName !== "") {
+
+        getMovies()
+
+    } else if (movieName === "" && yearSearch === "") {
+        async function getMovies() {
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=27`);
+                const data = await response.json();
+                popularMovies = data.results.slice(0, 20)
+                renderUi()
+                
+
+
+            }
+
+            catch (error) {
+                console.log(error);
+
+            }
+        }
+        getMovies()
+
+    }
+
+})
+
+
+// serch movie
+ async function getMovies() {
+            
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&query=${movieName}&page=${pages}`);
+                const data = await response.json();
+                popularMovies = data.results.slice(0, 20)
+                renderUi()
+            }
+            catch (error) {
+                console.log(error);
+
+            }
+        }
+
+const yearSelect = document.getElementById('yearSearch');
+
+for (let year = 2026; year >= 1970; year--) {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    yearSelect.appendChild(option);
+}
