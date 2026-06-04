@@ -67,7 +67,9 @@ function renderUi(){
 
 
         card.innerHTML= `
-         <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="moviePoster">
+         <div class="card-img-wrapper">
+         <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="moviePoster" class="card-img">
+         </div>
                     <div class="card-info">
                         <p>${movie.title}</p>
                         <div class="rating">
