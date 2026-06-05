@@ -16,6 +16,7 @@ next.addEventListener('click', () => {
       fetchMovies();
     }else{
         getMovies()
+        getByYear()
     }
     window.scrollTo({
         top: 0,
@@ -32,6 +33,7 @@ prev.addEventListener("click", () => {
       fetchMovies();
     }else{
         getMovies()
+        getByYear()
     }
 
         window.scrollTo({
@@ -78,7 +80,7 @@ function renderUi() {
 
 
         card.innerHTML = `
-         <div class="card-img-wrapper">
+         <div class="card-img-wrapper" onclick="openMovie(${movie.id})">
          <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="moviePoster" class="card-img">
          </div>
                     <div class="card-info">
@@ -122,16 +124,14 @@ searchForm.addEventListener("submit", (e) => {
 
         getMovies()
 
-    } else if (movieName === "" && yearSearch === "") {
-        async function getMovies() {
+    } else if (movieName === "") {
+        async function getByYear() {
             try {
-                const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=27`);
+                const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&primary_release_year=${yearSearch}&with_genres=${genre}&page=${pages}`);
                 const data = await response.json();
                 popularMovies = data.results.slice(0, 20)
                 renderUi()
-                
-
-
+            
             }
 
             catch (error) {
@@ -139,14 +139,14 @@ searchForm.addEventListener("submit", (e) => {
 
             }
         }
-        getMovies()
+        getByYear()
 
     }
 
 })
 
 
-// serch movie
+// serch movie  
  async function getMovies() {
             
             try {
@@ -169,3 +169,8 @@ for (let year = 2026; year >= 1970; year--) {
     option.textContent = year;
     yearSelect.appendChild(option);
 }
+
+
+function openMovie(id) {
+    window.location.href = `movie-details.html?id=${id}`;
+}   

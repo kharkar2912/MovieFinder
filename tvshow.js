@@ -36,7 +36,7 @@ function renderUi(){
         const tvCard = document.createElement('div');
          tvCard.classList.add('tvCard');
         tvCard.innerHTML = `
-         <div class="card-img-wrapper">
+         <div class="card-img-wrapper" onclick="openMovie(${movie.id})">
   
          <img src="https://image.tmdb.org/t/p/w500/${show.poster_path}" alt="moviePoster" class="card-img">
         </div>
@@ -108,3 +108,7 @@ for (let year = 2026; year >= 1970; year--) {
     option.textContent = year;
     yearSelect.appendChild(option);
 }
+
+function openMovie(id) {
+    window.location.href = `movie-details.html?id=${id}`;
+}   

@@ -45,7 +45,7 @@ function renderUI() {
 
     slide.innerHTML = `
     
-    <div class="movie-title">
+    <div class="movie-title" onclick="openMovie(${movie.id})">
         <p id="trending">Trending Now 🔥</p>
         <h1 id="title">${movie.title}</h1>
         <ul class="years">
@@ -93,7 +93,7 @@ function renderUI() {
 
 
       card_itam.innerHTML = `
-      <img src="https://image.tmdb.org/t/p/original${movie.poster_path}" id="card-image">
+      <img src="https://image.tmdb.org/t/p/original${movie.poster_path}" id="card-image" onclick="openMovie(${movie.id})">
                         <div class="movie-detail">
                             <h4 id="movie_name">${movie.title}</h4>
                             <div class="below">
@@ -198,5 +198,6 @@ function startSlider() {
 
 
 
-
-
+function openMovie(id) {
+    window.location.href = `movie-details.html?id=${id}`;
+}   

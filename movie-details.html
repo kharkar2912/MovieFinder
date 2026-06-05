@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+
+
+        <div class="logo">
+            <svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Icon -->
+                <g transform="translate(5,5)">
+                    <!-- Film reel top -->
+                    <rect x="0" y="0" width="24" height="6" rx="2" fill="#E50914" />
+                    <circle cx="12" cy="20" r="14" stroke="#E50914" stroke-width="3" fill="none" />
+
+                    <!-- Play button -->
+                    <polygon points="9,13 9,27 21,20" fill="#E50914" />
+
+                    <!-- Handle -->
+                    <rect x="20" y="28" width="12" height="4" rx="2" transform="rotate(45 20 28)" fill="#E50914" />
+                </g>
+
+                <!-- Text -->
+                <text x="50" y="33" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="white">
+                    MOVIE
+                </text>
+
+                <text x="128" y="33" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#E50914">
+                    FINDER
+                </text>
+
+            </svg>
+        </div>
+
+        <ul class="navlinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="/movies.html">Movies</a></li>
+            <li><a href="tvSeries.html">TV Show</a></li>
+            <li><a href="#">Top Rated</a></li>
+        </ul>
+
+        <div class="lastNav">
+            <div class="serach">
+                <svg style="color: white;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-search-icon lucide-search">
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                </svg>
+            </div>
+            <div class="liked">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-heart-icon lucide-heart">
+                    <path
+                        d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                </svg>
+                <p>My List</p>
+            </div>
+
+        </div>
+
+    </header>
+
+    <div class="main">
+        <div class="center-conatiner">
+
+        </div>
+
+    </div>
+    <section class="caste-crue">
+        <h1>CAST</h1>
+        <div class="cast-cards">
+
+        </div>
+    </section>
+
+    <section class="teaserContainer">
+        <h1>Teasers</h1>
+        <div class="teaser-card">
+            <div class="teasers">
+
+           
+            </div>
+        </div>
+    </section>
+
+
+
+    <Script>
+        let movie = []
+        let credits = []
+        let teaser = []
+        const apiKey = "c2b2450a7d2e59a0d4e951029f99dd83";
+
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get("id");
+
+
+        async function moviDetail() {
+
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+                const casteresponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`);
+                const data = await response.json();
+                const castedata = await casteresponse.json();
+                movie = data
+                credits = castedata.cast.slice(0, 10)
+                // teaser = videodata.results.slice(0, 10)
+
+                renderUi()
+
+            }
+            catch (error) {
+                console.log(error);
+
+            }
+        }
+        moviDetail();
+
+
+        async function getTeaser() {
+            try{
+                const teaserResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`);
+                const videodata = await teaserResponse.json();
+                teaser = videodata.results.slice(0, 2)
+                // console.log(videodata);
+                renderUi()
+            }
+            catch(error){
+                console.log(error);
+                
+            }
+        }
+        getTeaser()
+
+        function renderUi() {
+            console.log(movie);
+            console.log(movie.release_date);
+            console.log(teaser);
+
+
+            const mainContainer = document.querySelector('.main');
+
+            const centerConatiner = document.querySelector('.center-conatiner');
+            centerConatiner.classList.add('center-conatiner');
+
+            centerConatiner.innerHTML = `
+                <div class="left">
+                <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="movieposter">
+            </div>
+            <div class="right">
+                <h1 class="movie_title">${movie.title}</h1>
+                <div class="rating">
+                    <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="20" height="20">
+                        <path
+                            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                            fill="#FFD700" />
+                    </svg>
+
+                    <span id="rate">${movie.vote_average}</span>
+                    <span>|</span>
+                    <span id="rate">${movie.release_date}</span>
+                    <span>|</span>
+                    <span id="genrse">${movie.genres[0].name}</span>
+                    <span>|</span>
+                    <span id="hours">${movie.runtime} M</span>
+                </div>
+                <div class="buget">
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                            <path d="M12 18V6" />
+                        </svg>
+                        Buget : ${movie.budget}
+                    </p>
+                    <p>|</p>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                            <path d="M12 18V6" />
+                        </svg>
+                        Revenue : ${movie.revenue}
+                    </p>
+                </div>
+                <p id="tagline">${movie.tagline}</p>
+                <p id="overview">${movie.overview}</p>
+
+                <div class="movibuttons">
+                    <button id="playbtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-play-icon lucide-circle-play">
+                            <path
+                                d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z" />
+                            <circle cx="12" cy="12" r="10" />
+                        </svg>
+                        Play Trailer
+                    </button>
+                    <button id="mylistbtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-heart-icon lucide-heart">
+                            <path
+                                d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+
+
+            `;
+            mainContainer.appendChild(centerConatiner);
+
+
+            //  caste
+
+            const castCards = document.querySelector('.cast-cards')
+
+
+            credits.forEach(cast => {
+                const castcard = document.createElement('div');
+                castcard.classList.add('cast-card')
+
+                castcard.innerHTML = `
+    
+                <div class="castImg">
+                    <img src="https://image.tmdb.org/t/p/w500/${cast.profile_path}" alt="casteimage">
+                </div>
+                <div class="casteName">
+
+                    <p>${cast.name}</p>
+                    <p id="charName">${cast.character}</p>
+                </div>
+
+    `
+                castCards.appendChild(castcard)
+            })
+
+
+            // video 
+
+            const teaserCard = document.querySelector('.teaser-card');
+            teaser.forEach(video =>{
+                const teasers = document.createElement('div');
+                teasers.classList.add('teasers')
+
+                teasers.innerHTML= `
+                
+                 <iframe width="420" height="280" src="https://www.youtube.com/embed/${video.key}">
+                </iframe
+
+                `
+
+                teaserCard.appendChild(teasers)
+            })
+
+
+        }
+    </Script>
+
+</body>
+
+</html>
