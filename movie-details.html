@@ -149,9 +149,9 @@
         function renderUi() {
             console.log(movie);
             console.log(movie.release_date);
-            console.log(teaser);
-
-
+            console.log(teaser[0].key);
+            // <a href="https://www.youtube.com/embed/${teaser[0].key}"></a>
+            
             const mainContainer = document.querySelector('.main');
 
             const centerConatiner = document.querySelector('.center-conatiner');
