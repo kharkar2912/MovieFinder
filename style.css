@@ -767,8 +767,33 @@ option{
 .teaser-card{
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .teaserContainer h1{
     padding: 20px;
+}
+
+.images{
+    width: 400px;
+    /* height: 300px; */
+}
+.images:hover{
+    opacity: 0.75;
+}
+
+.images img{
+    width: 100%;
+}
+
+.posterCard{
+    display: flex;
+}
+
+.imagescards{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
