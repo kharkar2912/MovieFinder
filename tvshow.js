@@ -36,7 +36,7 @@ function renderUi(){
         const tvCard = document.createElement('div');
          tvCard.classList.add('tvCard');
         tvCard.innerHTML = `
-         <div class="card-img-wrapper" onclick="openMovie(${movie.id})">
+         <div class="card-img-wrapper" onclick="openMovie(${show.id})">
   
          <img src="https://image.tmdb.org/t/p/w500/${show.poster_path}" alt="moviePoster" class="card-img">
         </div>
