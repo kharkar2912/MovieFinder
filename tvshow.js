@@ -1,12 +1,12 @@
 const baseurl = "https://api.themoviedb.org/3"
 const api = "c2b2450a7d2e59a0d4e951029f99dd83"
-const url ="https://api.themoviedb.org/3/movie/popular?api_key=";
+const url ="https://api.themoviedb.org/3/tv/popular?api_key=";
 
 let popularShow = [];
 
 async function getShow(){
     try{
-        const response = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=c2b2450a7d2e59a0d4e951029f99dd83`);
+        const response = await fetch(`${url}${api}`);
         const data =  await response.json();
         popularShow =  data.results.slice(0,20)
         renderUi()
@@ -25,9 +25,6 @@ getShow()
 
 
 function renderUi(){
-    console.log(popularShow);
-    
-
     const tvshowContainer = document.querySelector('.tvshow-container');
 
     
@@ -82,7 +79,7 @@ if(genre !== 0){
 async function filterShow(){
         try{
 
-            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=${genre}`)
+            const response = await fetch(`https://api.themoviedb.org/3/discover/tv/?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=${genre}`)
             const data = await response.json();
             console.log(data);
             
@@ -110,5 +107,6 @@ for (let year = 2026; year >= 1970; year--) {
 }
 
 function openMovie(id) {
-    window.location.href = `movie-details.html?id=${id}`;
+    window.location.href = `tvShow-detail.html?id=${id}`;
 }   
+

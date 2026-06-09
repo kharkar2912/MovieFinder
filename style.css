@@ -773,7 +773,7 @@ option{
     justify-content: center;
 }
 
-.teaserContainer h1{
+.teaserContainer,.screenShots,.review-container h1{
     padding: 20px;
 }
 
