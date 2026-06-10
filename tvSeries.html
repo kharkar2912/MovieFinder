@@ -50,7 +50,22 @@
 
         </div>
 
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
     </header>
+
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="index.html">Home</a>
+        <a href="movies.html">Movies</a>
+        <a href="#" style="color: #E50914; font-weight: bold;">TV Show</a>
+        <a href="#">Top Rated</a>
+        <div class="mobile-nav-divider"></div>
+        <a href="#">❤️ My List</a>
+    </nav>
 
     <!--  Search part  -->
     <section>
@@ -111,6 +126,34 @@
     <button id="prev"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-icon lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Previous</button>
     <button id="next">Next<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
 </section>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        const mobileNavLinks = mobileNav.querySelectorAll('a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.navbar') && !e.target.closest('.mobile-nav')) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+            }
+        });
+    </script>
     <script src="tvshow.js"></script>
 
 </body>

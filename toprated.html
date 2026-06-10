@@ -22,8 +22,8 @@
         <ul class="navlinks">
             <li><a href="index.html">Home</a></li>
             <li><a href="movies.html">Movies</a></li>
-            <li><a href="#" style="color: red;">TV Show</a></li>
-            <li><a href="#">Top Rated</a></li>
+            <li><a href="tvSeries.html">TV Show</a></li>
+            <li><a href="#" style="color: red;">Top Rated</a></li>
         </ul>
 
         <div class="lastNav">
@@ -47,7 +47,22 @@
 
         </div>
 
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
     </header>
+
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="index.html">Home</a>
+        <a href="movies.html">Movies</a>
+        <a href="tvSeries.html">TV Show</a>
+        <a href="#" style="color: #E50914; font-weight: bold;">Top Rated</a>
+        <div class="mobile-nav-divider"></div>
+        <a href="#">❤️ My List</a>
+    </nav>
 
     <section>
           <div class="title">
@@ -58,6 +73,32 @@
             </div>
     </section>
 
-    
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        const mobileNavLinks = mobileNav.querySelectorAll('a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.navbar') && !e.target.closest('.mobile-nav')) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
