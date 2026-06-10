@@ -1,12 +1,52 @@
 const baseurl = "https://api.themoviedb.org/3"
 const api = "c2b2450a7d2e59a0d4e951029f99dd83"
 const url ="https://api.themoviedb.org/3/tv/popular?api_key=";
+const next = document.querySelector('#next');
+const prev = document.querySelector('#prev');
 
 let popularShow = [];
+let pages = 1
+
+
+let current = "popular"
+
+next.addEventListener('click', () => {
+    pages++;
+    window.history.pushState({}, "", `?page=${pages}`);
+    if(current === "popular"){
+      getShow()
+    }else{
+        getMovies()
+    }
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+
+})
+
+prev.addEventListener("click", () => {
+    if (pages > 1) {
+        pages--;
+        window.history.pushState({}, "", `?page=${pages}`);
+  if(current === "popular"){
+      getShow()
+    }else{
+        getMovies()
+        getByYear()
+    }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }
+});
+
 
 async function getShow(){
     try{
-        const response = await fetch(`${url}${api}`);
+        const response = await fetch(`${url}${api}&page=${pages}`);
         const data =  await response.json();
         popularShow =  data.results.slice(0,20)
         renderUi()
@@ -19,14 +59,12 @@ async function getShow(){
 }
 
 
-
-
 getShow()
 
 
 function renderUi(){
     const tvshowContainer = document.querySelector('.tvshow-container');
-
+    tvshowContainer.innerHTML = ""
     
 
     popularShow.forEach(show =>{

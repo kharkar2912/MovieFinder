@@ -68,8 +68,6 @@ fetchMovies()
 
 
 function renderUi() {
-    // console.log(popularMovies);
-    // console.log(popularShow);
 
     const movieContainer = document.querySelector('.movie-container');
     movieContainer.innerHTML = "";

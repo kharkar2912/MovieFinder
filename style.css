@@ -32,6 +32,26 @@ body {
     z-index: 1;
 }
 
+.logo{
+    display: flex;
+    align-items: center;
+}
+
+.logo h2{
+    font-size: 30px;
+    color: var(--text-main);
+}
+.logo span{
+    color: var(--accent-color);
+
+}
+
+
+.head a{
+    text-decoration: none;
+    color: var(--accent-color);
+}
+
 .navlinks {
     display: flex;
     gap: 50px;
