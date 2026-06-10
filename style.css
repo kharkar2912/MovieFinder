@@ -699,18 +699,23 @@ option{
 }
 
 #playbtn{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+   
     padding: 10px 20px;
     border-radius: 10px;
     border: none;
     font-size: 18px;
     font-weight: bold;
     background: linear-gradient(to right, #ff4d4d, #920000);
-    color: var(--text-main);
     cursor: pointer;
 
+}
+
+#playbtn a{
+    text-decoration: none;
+    color: var(--text-main);
+     display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 #mylistbtn{
@@ -762,9 +767,7 @@ option{
     color: var(--text-muted);
 }
 
-.caste-crue h1{
-    padding: 20px;
-}
+
 
 .teaser-card{
     display: flex;
@@ -773,9 +776,7 @@ option{
     justify-content: center;
 }
 
-.teaserContainer,.screenShots,.review-container h1{
-    padding: 20px;
-}
+
 
 .images{
     width: 400px;

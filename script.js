@@ -6,6 +6,8 @@ const imageUrl = "https://image.tmdb.org/t/p/original";
 let topMovies = [];
 let topRated = [];
 let popularMovies = [];
+let teaser = []
+
 
 async function getMovie() {
   try {
@@ -52,7 +54,6 @@ getPopular();
 
 
 function renderUI() {
-  console.log(topMovies);
   
   const heroSlider = document.querySelector(".hero-slider");  
   heroSlider.innerHTML = `
@@ -61,7 +62,7 @@ function renderUI() {
   `
 
   topMovies.forEach((movie, index) => {
-    getTrailer(movie.id); //
+    getTrailer(movie.id); 
 
     const slide = document.createElement("div");
     slide.classList.add("slide");
@@ -75,9 +76,9 @@ function renderUI() {
 
     slide.innerHTML = `
     
-    <div class="movie-title" onclick="openMovie(${movie.id})">
+    <div class="movie-title">
         <p id="trending">Trending Now 🔥</p>
-        <h1 id="title">${movie.title}</h1>
+        <h1 id="title"  onclick="openMovie(${movie.id})">${movie.title}</h1>
         <ul class="years">
             <li class="star"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                     fill="#fbff00" stroke="#fbff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -97,7 +98,7 @@ function renderUI() {
         </ul>
         <p id="movie-disc">${movie.overview}</p>
         <div class="buttons">
-            <button id="trailer">
+            <button id="trailer" onclick="watchTrailer(${movie.id})">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-play-icon lucide-play">
@@ -145,59 +146,36 @@ function renderUI() {
 }
 
 
+
 async function getTrailer(movieId) {
-
   try {
-
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=c2b2450a7d2e59a0d4e951029f99dd83`
     );
 
     const data = await response.json();
-   
 
     let selectedVideo = data.results.find(
-      video =>
-        video.type === "Trailer" &&
-        video.site === "YouTube"
+      video => video.type === "Trailer" && video.site === "YouTube"
     );
 
-
-
     if (!selectedVideo) {
-
       selectedVideo = data.results.find(
-        video =>
-          video.type === "Teaser" &&
-          video.site === "YouTube"
+        video => video.type === "Teaser" && video.site === "YouTube"
       );
-
     }
 
     if (selectedVideo) {
-
-
-      const youtubeUrl =
-        `https://www.youtube.com/watch?v=${selectedVideo.key}`;
-
-
-
-    } else {
-
-      console.log("No Trailer or Teaser Found");
-
+      return `https://www.youtube.com/watch?v=${selectedVideo.key}`;
     }
 
+    return null;
+
   } catch (error) {
-
     console.log(error);
-
+    return null;
   }
 }
-
-
-
-
 
 
 function renderTopRated() {
@@ -276,3 +254,18 @@ function startSlider() {
 
   setInterval(nextSlide, 5000);
 }   
+
+async function watchTrailer(movieId) {
+  const trailerUrl = await getTrailer(movieId);
+
+  if (trailerUrl) {
+    window.open(trailerUrl, "_blank");
+  } else {
+    alert("Trailer not available");
+  }
+}
+
+function searchMovie(query) {
+    window.location.href =
+        `movies.html?search=${encodeURIComponent(query)}`;
+}
