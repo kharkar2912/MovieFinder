@@ -4,6 +4,9 @@ const url = "https://api.themoviedb.org/3/movie/popular?api_key=";
 const next = document.querySelector('#next');
 const prev = document.querySelector('#prev');
 let movieName
+let lastMovieName = "";
+let lastYear = "";
+let lastGenre = "";
 
 let pages = 1
 
@@ -14,9 +17,8 @@ next.addEventListener('click', () => {
     window.history.pushState({}, "", `?page=${pages}`);
     if(current === "popular"){
       fetchMovies();
-    }else{
-        getMovies()
-        getByYear()
+    } else if(current === "search"){
+        performSearch(lastMovieName, lastYear, lastGenre);
     }
     window.scrollTo({
         top: 0,
@@ -29,13 +31,11 @@ prev.addEventListener("click", () => {
     if (pages > 1) {
         pages--;
         window.history.pushState({}, "", `?page=${pages}`);
-  if(current === "popular"){
-      fetchMovies();
-    }else{
-        getMovies()
-        getByYear()
-    }
-
+        if(current === "popular"){
+            fetchMovies();
+        } else if(current === "search"){
+            performSearch(lastMovieName, lastYear, lastGenre);
+        }
         window.scrollTo({
             top: 0,
             behavior: "smooth",
@@ -71,6 +71,12 @@ function renderUi() {
 
     const movieContainer = document.querySelector('.movie-container');
     movieContainer.innerHTML = "";
+    
+    if (popularMovies.length === 0) {
+        movieContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #aaa;">No movies found. Try different search criteria.</p>';
+        return;
+    }
+    
     popularMovies.forEach(movie => {
 
         const card = document.createElement('div')
@@ -102,62 +108,70 @@ function renderUi() {
 
     })
 
-
-
 }
 
 const searchForm = document.querySelector('.serach_form');
 
 searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
+    pages = 1;
 
-    const movieInput = document.querySelector('#movie_input').value
-    const yearSearch = document.querySelector('#yearSearch').value
-    const genre = document.querySelector('#genre').value
-    movieName = movieInput.trim();
-    popularMovies.length = 0
-    current = "search"
+    const movieInput = document.querySelector('#movie_input').value.trim();
+    const yearSearch = document.querySelector('#yearSearch').value;
+    const genre = document.querySelector('#genre').value;
+    
+    popularMovies.length = 0;
+    current = "search";
 
-    if (movieName !== "") {
+    // Build search query based on what fields are filled
+    performSearch(movieInput, yearSearch, genre);
+});
 
-        getMovies()
-
-    } else if (movieName === "") {
-        async function getByYear() {
-            try {
-                const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&primary_release_year=${yearSearch}&with_genres=${genre}&page=${pages}`);
-                const data = await response.json();
-                popularMovies = data.results.slice(0, 20)
-                renderUi()
-            
-            }
-
-            catch (error) {
-                console.log(error);
-
+async function performSearch(movieName, year, genreId) {
+    try {
+        // Store search values for pagination
+        lastMovieName = movieName;
+        lastYear = year;
+        lastGenre = genreId;
+        
+        let url = `https://api.themoviedb.org/3/discover/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&page=${pages}`;
+        
+        // Add year filter if selected (not "All year")
+        if (year && year !== "All year") {
+            url += `&primary_release_year=${year}`;
+        }
+        
+        // Add genre filter if selected
+        if (genreId && genreId !== "") {
+            url += `&with_genres=${genreId}`;
+        }
+        
+        // If movie name is provided, search by name
+        if (movieName !== "") {
+            url = `https://api.themoviedb.org/3/search/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&query=${encodeURIComponent(movieName)}&page=${pages}`;
+            // Add year filter to name search if selected
+            if (year && year !== "All year") {
+                url += `&primary_release_year=${year}`;
             }
         }
-        getByYear()
-
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.results && data.results.length > 0) {
+            popularMovies = data.results.slice(0, 20);
+        } else {
+            popularMovies = [];
+        }
+        
+        renderUi();
+        
+    } catch (error) {
+        console.log(error);
+        popularMovies = [];
+        renderUi();
     }
-
-})
-
-
-// serch movie  
- async function getMovies() {
-            
-            try {
-                const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=c2b2450a7d2e59a0d4e951029f99dd83&query=${movieName}&page=${pages}`);
-                const data = await response.json();
-                popularMovies = data.results.slice(0, 20)
-                renderUi()
-            }
-            catch (error) {
-                console.log(error);
-
-            }
-        }
+}
 
 const yearSelect = document.getElementById('yearSearch');
 
@@ -171,4 +185,30 @@ for (let year = 2026; year >= 1970; year--) {
 
 function openMovie(id) {
     window.location.href = `movie-details.html?id=${id}`;
-}   
+}
+
+// If the page was opened with a `search` query param, run the search automatically
+(function handleQuerySearch() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('search');
+        const pageParam = params.get('page');
+        if (pageParam) {
+            const p = parseInt(pageParam, 10);
+            if (!isNaN(p) && p > 0) pages = p;
+        }
+
+        if (q) {
+            const input = document.getElementById('movie_input');
+            if (input) input.value = decodeURIComponent(q);
+            // Use performSearch to apply name filter (and preserve year/genre defaults)
+            current = 'search';
+            lastMovieName = q;
+            lastYear = document.getElementById('yearSearch') ? document.getElementById('yearSearch').value : 'All year';
+            lastGenre = document.getElementById('genre') ? document.getElementById('genre').value : '';
+            performSearch(q, lastYear, lastGenre);
+        }
+    } catch (err) {
+        console.error('Error handling query search:', err);
+    }
+})();

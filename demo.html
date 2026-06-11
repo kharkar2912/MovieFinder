@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Finder</title>
+    <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
+
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #11141a;
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  background-color: #0b0c10;
+}
+
+#logo { color: #e50914; cursor: pointer; }
+
+button {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.screen { padding: 40px; }
+.hidden { display: none !important; }
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+#back-home-btn { background-color: #333; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+}
+
+.movie-card {
+  background-color: #1f2833;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.movie-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.movie-card h3 {
+  font-size: 16px;
+  margin: 10px;
+}
+
+.action-btn {
+  width: 80%;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.remove-btn { background-color: #555; }
+
+  </style>
+</head>
+<body>
+
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1 id="logo">MovieFinder</h1>
+    <button id="nav-my-list-btn">My List 🍿</button>
+  </nav>
+
+  <!-- Home Screen / Movie Search -->
+  <section id="home-screen" class="screen">
+    <h2>Trending Movies</h2>
+    <div id="movie-grid" class="grid">
+      <!-- Movie cards will be generated here by JavaScript -->
+    </div>
+  </section>
+
+  <!-- My List Screen (Hidden by default) -->
+  <section id="mylist-screen" class="screen hidden">
+    <div class="list-header">
+      <h2>My Saved Movies</h2>
+      <button id="back-home-btn">Back to Home</button>
+    </div>
+    <div id="mylist-grid" class="grid">
+      <!-- Saved movies will show up here -->
+    </div>
+  </section>
+
+  <script>
+let dummyMovies = []
+
+async function getMovie() {
+  try {
+    const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=c2b2450a7d2e59a0d4e951029f99dd83`);
+    const data = await response.json();
+    dummyMovies = data.results.slice(0, 12);
+    displayHomeMovies()   
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+getMovie()
+
+
+
+
+// DOM Elements
+const homeScreen = document.getElementById('home-screen');
+const mylistScreen = document.getElementById('mylist-screen');
+const movieGrid = document.getElementById('movie-grid');
+const mylistGrid = document.getElementById('mylist-grid');
+
+const navMyListBtn = document.getElementById('nav-my-list-btn');
+const backHomeBtn = document.getElementById('back-home-btn');
+const logo = document.getElementById('logo');
+
+// --- SCREEN NAVIGATION ---
+navMyListBtn.addEventListener('click', () => {
+    // console.log(dummyMovies);
+    
+  homeScreen.classList.add('hidden');
+  mylistScreen.classList.remove('hidden');
+  displayMyList(); // Refresh list display
+});
+
+const showHomeScreen = () => {
+  mylistScreen.classList.add('hidden');
+  homeScreen.classList.remove('hidden');
+};
+
+backHomeBtn.addEventListener('click', showHomeScreen);
+logo.addEventListener('click', showHomeScreen);
+
+
+// --- HOME SCREEN: DISPLAY MOVIES ---
+function displayHomeMovies() {
+  movieGrid.innerHTML = '';
+  dummyMovies.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'movie-card';
+    card.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/original${movie.backdrop_path}" alt="${movie.title}">
+      <h3>${movie.title}</h3>
+      <button class="action-btn" onclick="addToMyList(${movie.id})">Add to List</button>
+    `;
+    movieGrid.appendChild(card);
+  });
+}
+
+// --- CORE LOGIC: SAVE TO LOCALSTORAGE ---
+function addToMyList(movieId) {
+  // Find movie details by ID
+  const movieToAdd = dummyMovies.find(m => m.id === movieId);
+  
+  // Fetch current list or set empty array
+  let currentList = JSON.parse(localStorage.getItem('myMovies')) || [];
+  
+  // Check for duplicates
+  const alreadyExists = currentList.some(m => m.id === movieId);
+  
+  if (!alreadyExists) {
+    currentList.push(movieToAdd);
+    localStorage.setItem('myMovies', JSON.stringify(currentList));
+  } else {
+    alert("Movie is already in your list!");
+  }
+}
+
+// --- MY LIST SCREEN: DISPLAY SAVED MOVIES ---
+function displayMyList() {
+  mylistGrid.innerHTML = '';
+  const savedMovies = JSON.parse(localStorage.getItem('myMovies')) || [];
+  
+  if (savedMovies.length === 0) {
+    mylistGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">Your list is empty.</p>';
+    return;
+  }
+  
+  savedMovies.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'movie-card';
+    card.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/original${movie.backdrop_path}" alt="${movie.title}">
+      <h3>${movie.title}</h3>
+      <button class="action-btn remove-btn" onclick="removeFromList(${movie.id})">Remove</button>
+    `;
+    mylistGrid.appendChild(card);
+  });
+}
+
+// --- CORE LOGIC: REMOVE FROM LOCALSTORAGE ---
+function removeFromList(movieId) {
+  let savedMovies = JSON.parse(localStorage.getItem('myMovies')) || [];
+  
+  // Filter out the deleted movie
+  savedMovies = savedMovies.filter(m => m.id !== movieId);
+  
+  // Re-save to local storage
+  localStorage.setItem('myMovies', JSON.stringify(savedMovies));
+  
+  // Refresh screen content
+  displayMyList();
+}
+
+// Initialise home view
+displayHomeMovies();
+
+  </script>
+</body>
+</html>

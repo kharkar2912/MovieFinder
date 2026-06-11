@@ -269,3 +269,130 @@ function searchMovie(query) {
     window.location.href =
         `movies.html?search=${encodeURIComponent(query)}`;
 }
+
+// Search Modal
+const searchBtn = document.getElementById('searchBtn');
+const searchModal = document.getElementById('searchModal');
+const closeSearch = document.getElementById('closeSearch');
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const searchTabs = document.querySelectorAll('.search-tab');
+
+let currentSearchTab = 'all';
+
+
+searchBtn.addEventListener('click', () => {
+    searchModal.classList.add('active');
+    searchInput.focus();
+});
+
+closeSearch.addEventListener('click', () => {
+    searchModal.classList.remove('active');
+});
+
+
+searchModal.addEventListener('click', (e) => {
+    if (e.target === searchModal) {
+        searchModal.classList.remove('active');
+    }
+});
+
+
+searchTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        searchTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentSearchTab = tab.getAttribute('data-tab');
+        if (searchInput.value.trim()) {
+            performSearch(searchInput.value);
+        }
+    });
+});
+
+let searchTimeout;
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    
+    if (query.length === 0) {
+        searchResults.innerHTML = '<p class="search-placeholder">Start typing to search...</p>';
+        return;
+    }
+    
+    searchTimeout = setTimeout(() => {
+        performSearch(query);
+    }, 300);
+});
+
+async function performSearch(query) {
+    searchResults.innerHTML = '<p class="search-placeholder">Searching...</p>';
+    
+    try {
+        const API_KEY = 'c2b2450a7d2e59a0d4e951029f99dd83';
+        const baseUrl = 'https://api.themoviedb.org/3';
+        
+        let results = [];
+        
+        if (currentSearchTab === 'all' || currentSearchTab === 'movies') {
+            const movieResponse = await fetch(
+                `${baseUrl}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+            );
+            const movieData = await movieResponse.json();
+            results = results.concat(movieData.results.map(item => ({ ...item, media_type: 'movie' })));
+        }
+        
+        if (currentSearchTab === 'all' || currentSearchTab === 'tv') {
+            const tvResponse = await fetch(
+                `${baseUrl}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+            );
+            const tvData = await tvResponse.json();
+            results = results.concat(tvData.results.map(item => ({ ...item, media_type: 'tv' })));
+        }
+        
+        displaySearchResults(results);
+    } catch (error) {
+        console.error('Search error:', error);
+        searchResults.innerHTML = '<p class="search-placeholder">Error searching. Please try again.</p>';
+    }
+}
+
+function displaySearchResults(results) {
+    if (results.length === 0) {
+        searchResults.innerHTML = '<p class="search-placeholder">No results found</p>';
+        return;
+    }
+    
+    searchResults.innerHTML = '';
+    
+    results.slice(0, 20).forEach(item => {
+        const posterPath = item.poster_path;
+        const title = item.title || item.name;
+        const year = new Date(item.release_date || item.first_air_date).getFullYear() || 'N/A';
+        const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+        const mediaType = item.media_type;
+        const id = item.id;
+        
+        if (!posterPath) return;
+        
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        resultItem.innerHTML = `
+            <img src="https://image.tmdb.org/t/p/w200${posterPath}" alt="${title}">
+            <div class="search-result-info">
+                <div class="search-result-title">${title}</div>
+                <div class="search-result-year">${year}</div>
+                <div class="search-result-rating">⭐ ${rating}</div>
+            </div>
+        `;
+        
+        resultItem.addEventListener('click', () => {
+            if (mediaType === 'movie') {
+                window.location.href = `movie-details.html?id=${id}`;
+            } else {
+                window.location.href = `tvshow-detail.html?id=${id}`;
+            }
+        });
+        
+        searchResults.appendChild(resultItem);
+    });
+}

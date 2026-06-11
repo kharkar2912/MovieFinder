@@ -6,7 +6,9 @@ const prev = document.querySelector('#prev');
 
 let popularShow = [];
 let pages = 1
-
+let lastShowName = "";
+let lastYear = "";
+let lastGenre = "";
 
 let current = "popular"
 
@@ -15,8 +17,8 @@ next.addEventListener('click', () => {
     window.history.pushState({}, "", `?page=${pages}`);
     if(current === "popular"){
       getShow()
-    }else{
-        getMovies()
+    } else if(current === "search"){
+        performSearch(lastShowName, lastYear, lastGenre);
     }
     window.scrollTo({
         top: 0,
@@ -29,13 +31,11 @@ prev.addEventListener("click", () => {
     if (pages > 1) {
         pages--;
         window.history.pushState({}, "", `?page=${pages}`);
-  if(current === "popular"){
-      getShow()
-    }else{
-        getMovies()
-        getByYear()
-    }
-
+        if(current === "popular"){
+            getShow()
+        } else if(current === "search"){
+            performSearch(lastShowName, lastYear, lastGenre);
+        }
         window.scrollTo({
             top: 0,
             behavior: "smooth",
@@ -66,6 +66,10 @@ function renderUi(){
     const tvshowContainer = document.querySelector('.tvshow-container');
     tvshowContainer.innerHTML = ""
     
+    if (popularShow.length === 0) {
+        tvshowContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #aaa;">No TV shows found. Try different search criteria.</p>';
+        return;
+    }
 
     popularShow.forEach(show =>{
         const tvCard = document.createElement('div');
@@ -87,51 +91,71 @@ function renderUi(){
                           <div class="about">Science Fiction, Adventure, Fantasy</div>
                     </div>`
 
-
-
      tvshowContainer.appendChild(tvCard);
     })
-
-
 }
 
 const searchForm = document.querySelector('.serach_form');
 
 searchForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    pages = 1;
 
-    const searchText = document.querySelector('#show_input').value.toLowerCase();
+    const showInput = document.querySelector('#show_input').value.trim();
     const year = document.querySelector('#yearSearch').value;
     const genre = document.querySelector('#genre').value;
 
-   
-    console.log(searchText)
-    console.log(year)
-    console.log(genre)
+    popularShow.length = 0;
+    current = "search";
 
-
-    ;
-
-
-if(genre !== 0){
-async function filterShow(){
-        try{
-
-            const response = await fetch(`https://api.themoviedb.org/3/discover/tv/?api_key=c2b2450a7d2e59a0d4e951029f99dd83&with_genres=${genre}`)
-            const data = await response.json();
-            console.log(data);
-            
-        }
-        catch(error){
-            console.log(error);
-            
-        }
-
-    }
-    filterShow()
-}
-    
+    performSearch(showInput, year, genre);
 });
+
+async function performSearch(showName, year, genreId) {
+    try {
+        // Store search values for pagination
+        lastShowName = showName;
+        lastYear = year;
+        lastGenre = genreId;
+        
+        let url = `https://api.themoviedb.org/3/discover/tv?api_key=c2b2450a7d2e59a0d4e951029f99dd83&page=${pages}`;
+        
+        // Add year filter if selected (not "All year")
+        if (year && year !== "All year") {
+            url += `&first_air_date_year=${year}`;
+        }
+        
+        // Add genre filter if selected
+        if (genreId && genreId !== "") {
+            url += `&with_genres=${genreId}`;
+        }
+        
+        // If show name is provided, search by name
+        if (showName !== "") {
+            url = `https://api.themoviedb.org/3/search/tv?api_key=c2b2450a7d2e59a0d4e951029f99dd83&query=${encodeURIComponent(showName)}&page=${pages}`;
+            // Add year filter to name search if selected
+            if (year && year !== "All year") {
+                url += `&first_air_date_year=${year}`;
+            }
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.results && data.results.length > 0) {
+            popularShow = data.results.slice(0, 20);
+        } else {
+            popularShow = [];
+        }
+        
+        renderUi();
+        
+    } catch (error) {
+        console.log(error);
+        popularShow = [];
+        renderUi();
+    }
+}
 
 //  years creating for option 
 
